@@ -1,18 +1,18 @@
 package com.silchenko.arsen.testexampleforclearsolutions.service;
 
-import com.silchenko.arsen.testexampleforclearsolutions.dto.CreateUserRequest;
-import com.silchenko.arsen.testexampleforclearsolutions.dto.UpdateUserRequest;
+import com.silchenko.arsen.testexampleforclearsolutions.dto.CreateUserRequestDto;
+import com.silchenko.arsen.testexampleforclearsolutions.dto.UpdateUserRequestDto;
 import com.silchenko.arsen.testexampleforclearsolutions.dto.UserResponseDto;
 
 import java.time.LocalDate;
 import java.util.List;
 
 public interface UserService {
-    UserResponseDto create(CreateUserRequest request);
+    UserResponseDto create(CreateUserRequestDto request);
 
-    UserResponseDto updateFields(Integer id, UpdateUserRequest request);
+    UserResponseDto updateFields(Integer id, UpdateUserRequestDto request);
 
-    UserResponseDto update(Integer id, UpdateUserRequest request);
+    UserResponseDto update(Integer id, UpdateUserRequestDto request);
 
     void delete(Integer id);
 

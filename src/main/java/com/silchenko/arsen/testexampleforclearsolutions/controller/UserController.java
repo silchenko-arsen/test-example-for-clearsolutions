@@ -1,7 +1,7 @@
 package com.silchenko.arsen.testexampleforclearsolutions.controller;
 
-import com.silchenko.arsen.testexampleforclearsolutions.dto.CreateUserRequest;
-import com.silchenko.arsen.testexampleforclearsolutions.dto.UpdateUserRequest;
+import com.silchenko.arsen.testexampleforclearsolutions.dto.CreateUserRequestDto;
+import com.silchenko.arsen.testexampleforclearsolutions.dto.UpdateUserRequestDto;
 import com.silchenko.arsen.testexampleforclearsolutions.dto.UserResponseDto;
 import com.silchenko.arsen.testexampleforclearsolutions.service.UserService;
 import jakarta.validation.Valid;
@@ -30,17 +30,17 @@ public class UserController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public UserResponseDto create(@Valid @RequestBody CreateUserRequest request) {
+    public UserResponseDto create(@Valid @RequestBody CreateUserRequestDto request) {
         return userService.create(request);
     }
 
     @PatchMapping("/{id}")
-    public UserResponseDto updateFields(@PathVariable Integer id, @RequestBody UpdateUserRequest request) {
+    public UserResponseDto updateFields(@PathVariable Integer id, @RequestBody UpdateUserRequestDto request) {
         return userService.updateFields(id, request);
     }
 
     @PutMapping("/{id}")
-    public UserResponseDto update(@PathVariable Integer id, @Valid @RequestBody UpdateUserRequest request) {
+    public UserResponseDto update(@PathVariable Integer id, @Valid @RequestBody UpdateUserRequestDto request) {
         return userService.update(id, request);
     }
 

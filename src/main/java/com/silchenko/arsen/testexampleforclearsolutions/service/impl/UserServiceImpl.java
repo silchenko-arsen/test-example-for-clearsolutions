@@ -1,10 +1,10 @@
 package com.silchenko.arsen.testexampleforclearsolutions.service.impl;
 
-import com.silchenko.arsen.testexampleforclearsolutions.dto.CreateUserRequest;
-import com.silchenko.arsen.testexampleforclearsolutions.dto.UpdateUserRequest;
+import com.silchenko.arsen.testexampleforclearsolutions.dto.CreateUserRequestDto;
+import com.silchenko.arsen.testexampleforclearsolutions.dto.UpdateUserRequestDto;
 import com.silchenko.arsen.testexampleforclearsolutions.dto.UserResponseDto;
-import com.silchenko.arsen.testexampleforclearsolutions.exception.InsufficientAgeException;
-import com.silchenko.arsen.testexampleforclearsolutions.exception.UserNotFoundException;
+import com.silchenko.arsen.testexampleforclearsolutions.exception.InvalidArgumentException;
+import com.silchenko.arsen.testexampleforclearsolutions.exception.ResourceNotFoundException;
 import com.silchenko.arsen.testexampleforclearsolutions.mapper.UserMapper;
 import com.silchenko.arsen.testexampleforclearsolutions.model.User;
 import com.silchenko.arsen.testexampleforclearsolutions.service.UserService;
@@ -30,8 +30,8 @@ public class UserServiceImpl implements UserService {
     private static final Map<Integer, User> userMap = new HashMap<>();
 
     @Override
-    public UserResponseDto create(CreateUserRequest request) {
-        isValidAge(request.birthDate());
+    public UserResponseDto create(CreateUserRequestDto request) {
+        validateAge(request.birthDate());
         User user = userMapper.mapToModel(request);
         userMap.put(User.getId(), user);
         user.idCounter();
@@ -39,11 +39,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponseDto updateFields(Integer id, UpdateUserRequest request) {
+    public UserResponseDto updateFields(Integer id, UpdateUserRequestDto request) {
         if (userMap.containsKey(id)) {
             User user = userMap.get(id);
             if (request.birthDate() != null) {
-                isValidAge(request.birthDate());
+                validateAge(request.birthDate());
                 user.setBirthDate(request.birthDate());
             }
             if (request.email() != null && !request.email().isEmpty()) {
@@ -64,19 +64,19 @@ public class UserServiceImpl implements UserService {
             userMap.put(id, user);
             return userMapper.mapToResponseDto(user);
         } else {
-            throw new UserNotFoundException("User with this id " + id + " did not find.");
+            throw new ResourceNotFoundException("User with this id " + id + " did not find.");
         }
     }
 
     @Override
-    public UserResponseDto update(Integer id, UpdateUserRequest request) {
+    public UserResponseDto update(Integer id, UpdateUserRequestDto request) {
         if (userMap.containsKey(id)) {
-            isValidAge(request.birthDate());
+            validateAge(request.birthDate());
             User user = userMapper.mapToModel(request);
             userMap.put(id, user);
             return userMapper.mapToResponseDto(user);
         } else {
-            throw new UserNotFoundException("User with this id " + id + " did not find.");
+            throw new ResourceNotFoundException("User with this id " + id + " did not find.");
         }
     }
 
@@ -96,10 +96,10 @@ public class UserServiceImpl implements UserService {
         return usersInRange.stream().map(userMapper::mapToResponseDto).toList();
     }
 
-    private void isValidAge(LocalDate birthDate) {
+    private void validateAge(LocalDate birthDate) {
         int age = Period.between(birthDate, LocalDate.now()).getYears();
         if (ageLimit > age) {
-            throw new InsufficientAgeException(age + " years is not enough for registration.");
+            throw new InvalidArgumentException(age + " years is not enough for registration.");
         }
     }
 }

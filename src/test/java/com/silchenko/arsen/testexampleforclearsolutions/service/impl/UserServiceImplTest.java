@@ -1,10 +1,10 @@
 package com.silchenko.arsen.testexampleforclearsolutions.service.impl;
 
-import com.silchenko.arsen.testexampleforclearsolutions.dto.CreateUserRequest;
-import com.silchenko.arsen.testexampleforclearsolutions.dto.UpdateUserRequest;
+import com.silchenko.arsen.testexampleforclearsolutions.dto.CreateUserRequestDto;
+import com.silchenko.arsen.testexampleforclearsolutions.dto.UpdateUserRequestDto;
 import com.silchenko.arsen.testexampleforclearsolutions.dto.UserResponseDto;
-import com.silchenko.arsen.testexampleforclearsolutions.exception.InsufficientAgeException;
-import com.silchenko.arsen.testexampleforclearsolutions.exception.UserNotFoundException;
+import com.silchenko.arsen.testexampleforclearsolutions.exception.InvalidArgumentException;
+import com.silchenko.arsen.testexampleforclearsolutions.exception.ResourceNotFoundException;
 import com.silchenko.arsen.testexampleforclearsolutions.mapper.UserMapper;
 import com.silchenko.arsen.testexampleforclearsolutions.model.User;
 import org.junit.jupiter.api.BeforeEach;
@@ -39,7 +39,7 @@ public class UserServiceImplTest {
 
     @Test
     void testCreateUserWithValidUser() {
-        CreateUserRequest createUserRequest = new CreateUserRequest(
+        CreateUserRequestDto createUserRequest = new CreateUserRequestDto(
                 "john@example.com",
                 "John",
                 "Doe",
@@ -70,7 +70,7 @@ public class UserServiceImplTest {
 
     @Test
     void testCreateUserWithInsufficientAge() {
-        CreateUserRequest request = new CreateUserRequest(
+        CreateUserRequestDto request = new CreateUserRequestDto(
                 "john@example.com",
                 "John",
                 "Doe",
@@ -78,13 +78,13 @@ public class UserServiceImplTest {
                 "123 Street",
                 "1234567890"
         );
-        assertThrows(InsufficientAgeException.class, () -> userService.create(request));
+        assertThrows(InvalidArgumentException.class, () -> userService.create(request));
     }
 
     @Test
     void testUpdateFieldsWithValidIdAndUser() {
         Integer userId = 1;
-        UpdateUserRequest updateUserRequest = new UpdateUserRequest("john@example.com", "John", "Doe",
+        UpdateUserRequestDto updateUserRequest = new UpdateUserRequestDto("john@example.com", "John", "Doe",
                 LocalDate.of(1990, 5, 15), "123 Main St", null);
         User user = new User();
         user.setEmail("old@example.com");
@@ -104,15 +104,15 @@ public class UserServiceImplTest {
     @Test
     void testUpdateFieldsForNonExistingUser() {
         Integer userId = 5;
-        UpdateUserRequest updateUserRequest = new UpdateUserRequest("john@example.com", "John", "Doe",
+        UpdateUserRequestDto updateUserRequest = new UpdateUserRequestDto("john@example.com", "John", "Doe",
                 LocalDate.of(1990, 5, 15), "123 Main St", "1234567890");
-        assertThrows(UserNotFoundException.class, () -> userService.updateFields(userId, updateUserRequest));
+        assertThrows(ResourceNotFoundException.class, () -> userService.updateFields(userId, updateUserRequest));
     }
 
     @Test
     void testUpdateFieldsWithInsufficientAge() {
         Integer userId = 1;
-        UpdateUserRequest updateUserRequest = new UpdateUserRequest("john@example.com", "John", "Doe",
+        UpdateUserRequestDto updateUserRequest = new UpdateUserRequestDto("john@example.com", "John", "Doe",
                 LocalDate.of(2009, 5, 15), "123 Main St", "1234567890");
         User user = new User();
         user.setEmail("old@example.com");
@@ -122,13 +122,13 @@ public class UserServiceImplTest {
         user.setAddress("456 Oak St");
         user.setPhoneNumber("9876543210");
         UserServiceImpl.getUserMap().put(userId, user);
-        assertThrows(InsufficientAgeException.class, () -> userService.updateFields(userId, updateUserRequest));
+        assertThrows(InvalidArgumentException.class, () -> userService.updateFields(userId, updateUserRequest));
     }
 
     @Test
     void testUpdateWithValidIdAndUser() {
         Integer userId = 1;
-        UpdateUserRequest updateUserRequest = new UpdateUserRequest("john@example.com", "John", "Doe",
+        UpdateUserRequestDto updateUserRequest = new UpdateUserRequestDto("john@example.com", "John", "Doe",
                 LocalDate.of(1990, 5, 15), "123 Main St", "1234567890");
         User user = new User();
         user.setEmail("old@example.com");
@@ -155,15 +155,15 @@ public class UserServiceImplTest {
     @Test
     void testUpdateForNonExistingUser() {
         Integer userId = 1;
-        UpdateUserRequest updateUserRequest = new UpdateUserRequest("john@example.com", "John", "Doe",
+        UpdateUserRequestDto updateUserRequest = new UpdateUserRequestDto("john@example.com", "John", "Doe",
                 LocalDate.of(1990, 5, 15), "123 Main St", "1234567890");
-        assertThrows(UserNotFoundException.class, () -> userService.update(userId, updateUserRequest));
+        assertThrows(ResourceNotFoundException.class, () -> userService.update(userId, updateUserRequest));
     }
 
     @Test
     void testUpdateWithInsufficientAge() {
         Integer userId = 1;
-        UpdateUserRequest updateUserRequest = new UpdateUserRequest("john@example.com", "John", "Doe",
+        UpdateUserRequestDto updateUserRequest = new UpdateUserRequestDto("john@example.com", "John", "Doe",
                 LocalDate.of(2009, 5, 15), "123 Main St", "1234567890");
         User user = new User();
         user.setEmail("old@example.com");
@@ -173,7 +173,7 @@ public class UserServiceImplTest {
         user.setAddress("456 Oak St");
         user.setPhoneNumber("9876543210");
         UserServiceImpl.getUserMap().put(userId, user);
-        assertThrows(InsufficientAgeException.class, () -> userService.update(userId, updateUserRequest));
+        assertThrows(InvalidArgumentException.class, () -> userService.update(userId, updateUserRequest));
     }
 
     @Test

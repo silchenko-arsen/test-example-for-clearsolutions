@@ -1,12 +1,11 @@
 package com.silchenko.arsen.testexampleforclearsolutions.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.silchenko.arsen.testexampleforclearsolutions.dto.CreateUserRequest;
-import com.silchenko.arsen.testexampleforclearsolutions.dto.UpdateUserRequest;
+import com.silchenko.arsen.testexampleforclearsolutions.dto.CreateUserRequestDto;
+import com.silchenko.arsen.testexampleforclearsolutions.dto.UpdateUserRequestDto;
 import com.silchenko.arsen.testexampleforclearsolutions.dto.UserResponseDto;
 import com.silchenko.arsen.testexampleforclearsolutions.model.User;
 import com.silchenko.arsen.testexampleforclearsolutions.service.impl.UserServiceImpl;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -19,9 +18,6 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -53,7 +49,7 @@ class UserControllerIntegrationTest {
 
     @Test
     void testCreateUserWithValidUser() throws Exception {
-        CreateUserRequest createUserRequest = new CreateUserRequest(
+        CreateUserRequestDto createUserRequest = new CreateUserRequestDto(
                 "john@example.com",
                 "John",
                 "Doe",
@@ -89,7 +85,7 @@ class UserControllerIntegrationTest {
 
     @Test
     void testCreateUserWithInValidAge() throws Exception {
-        CreateUserRequest createUserRequest = new CreateUserRequest(
+        CreateUserRequestDto createUserRequest = new CreateUserRequestDto(
                 "john@example.com",
                 "John",
                 "Doe",
@@ -107,7 +103,7 @@ class UserControllerIntegrationTest {
     @Test
     void testUpdateFieldsWithValidIdAndUser() throws Exception {
         Integer userId = 1;
-        UpdateUserRequest updateUserRequest = new UpdateUserRequest("john@example.com", "John", "Doe",
+        UpdateUserRequestDto updateUserRequest = new UpdateUserRequestDto("john@example.com", "John", "Doe",
                 LocalDate.of(1990, 5, 15), "123 Main St", null);
         User user = new User();
         user.setEmail("old@example.com");
@@ -141,7 +137,7 @@ class UserControllerIntegrationTest {
         user.setAddress("456 Oak St");
         user.setPhoneNumber("9876543210");
         UserServiceImpl.getUserMap().put(userId, user);
-        UpdateUserRequest updateUserRequest = new UpdateUserRequest("john@example.com", "John", "Doe",
+        UpdateUserRequestDto updateUserRequest = new UpdateUserRequestDto("john@example.com", "John", "Doe",
                 LocalDate.of(1990, 5, 15), "123 Main St", null);
         String jsonRequest = objectMapper.writeValueAsString(updateUserRequest);
         mockMvc.perform(patch("/api/users/{id}", 2)
@@ -161,7 +157,7 @@ class UserControllerIntegrationTest {
         user.setAddress("456 Oak St");
         user.setPhoneNumber("9876543210");
         UserServiceImpl.getUserMap().put(userId, user);
-        UpdateUserRequest updateUserRequest = new UpdateUserRequest("john@example.com", "John", "Doe",
+        UpdateUserRequestDto updateUserRequest = new UpdateUserRequestDto("john@example.com", "John", "Doe",
                 LocalDate.of(2009, 5, 15), "123 Main St", null);
         String jsonRequest = objectMapper.writeValueAsString(updateUserRequest);
         mockMvc.perform(patch("/api/users/{id}", userId)
@@ -173,7 +169,7 @@ class UserControllerIntegrationTest {
     @Test
     void testUpdateWithValidIdAndUser() throws Exception {
         Integer userId = 1;
-        UpdateUserRequest updateUserRequest = new UpdateUserRequest("john@example.com", "John", "Doe",
+        UpdateUserRequestDto updateUserRequest = new UpdateUserRequestDto("john@example.com", "John", "Doe",
                 LocalDate.of(1990, 5, 15), "123 Main St", "1234567890");
         User user = new User();
         user.setEmail("old@example.com");
@@ -214,7 +210,7 @@ class UserControllerIntegrationTest {
         user.setAddress("456 Oak St");
         user.setPhoneNumber("9876543210");
         UserServiceImpl.getUserMap().put(userId, user);
-        UpdateUserRequest updateUserRequest = new UpdateUserRequest("john@example.com", "John", "Doe",
+        UpdateUserRequestDto updateUserRequest = new UpdateUserRequestDto("john@example.com", "John", "Doe",
                 LocalDate.of(1990, 5, 15), "123 Main St", "1234567890");
         String jsonRequest = objectMapper.writeValueAsString(updateUserRequest);
         mockMvc.perform(put("/api/users/{id}", 2)
@@ -234,7 +230,7 @@ class UserControllerIntegrationTest {
         user.setAddress("456 Oak St");
         user.setPhoneNumber("9876543210");
         UserServiceImpl.getUserMap().put(userId, user);
-        UpdateUserRequest updateUserRequest = new UpdateUserRequest("john@example.com", "John", "Doe",
+        UpdateUserRequestDto updateUserRequest = new UpdateUserRequestDto("john@example.com", "John", "Doe",
                 LocalDate.of(2009, 5, 15), "123 Main St", "1234567890");
         String jsonRequest = objectMapper.writeValueAsString(updateUserRequest);
         mockMvc.perform(put("/api/users/{id}", userId)

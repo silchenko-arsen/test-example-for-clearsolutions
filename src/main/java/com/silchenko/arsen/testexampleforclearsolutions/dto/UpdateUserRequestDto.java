@@ -7,16 +7,16 @@ import jakarta.validation.constraints.Past;
 
 import java.time.LocalDate;
 
-public record CreateUserRequest(@NotBlank
+public record UpdateUserRequestDto(@NotBlank
                                 @Email
                                 String email,
-                                @NotBlank
+                                   @NotBlank
                                 String firstName,
-                                @NotBlank
+                                   @NotBlank
                                 String lastName,
-                                @NotNull
+                                   @NotNull
                                 @Past
                                 LocalDate birthDate,
-                                String address,
-                                String phoneNumber) {
+                                   String address,
+                                   String phoneNumber) {
 }

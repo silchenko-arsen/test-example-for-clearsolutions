@@ -1,60 +1,49 @@
 package com.silchenko.arsen.testexampleforclearsolutions.exception;
 
-import org.springframework.http.HttpStatus;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.LocalDateTime;
-import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @RestControllerAdvice(basePackages = "com.silchenko.arsen.testexampleforclearsolutions.controller")
 public class CustomGlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Object> handleMethodArgumentNotValid(
-            MethodArgumentNotValidException ex) {
-        Map<String, Object> body = new LinkedHashMap<>();
-        body.put("timestamp", LocalDateTime.now());
-        body.put("status", HttpStatus.BAD_REQUEST.value());
-        body.put("error", HttpStatus.BAD_REQUEST.getReasonPhrase());
-        List<String> messages = ex.getBindingResult().getAllErrors().stream()
-                .map(this::getErrorMessage)
-                .toList();
-        body.put("messages", messages);
-        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    protected ResponseEntity<Object> invalidArgument(MethodArgumentNotValidException ex) {
+        return buildResponseEntity(new UserApiErrorResponse(BAD_REQUEST,
+                LocalDateTime.now(), getErrorsMessage(ex.getBindingResult())));
     }
 
-    @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<Object> handleUserNotFoundException(UserNotFoundException ex) {
-        Map<String, Object> body = new LinkedHashMap<>();
-        body.put("timestamp", LocalDateTime.now());
-        body.put("status", HttpStatus.NOT_FOUND.value());
-        body.put("error", HttpStatus.NOT_FOUND.getReasonPhrase());
-        body.put("message", ex.getMessage());
-        return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<Object> handleUserNotFoundException(ResourceNotFoundException ex) {
+        return buildResponseEntity(new UserApiErrorResponse(NOT_FOUND,
+                LocalDateTime.now(), ex.getMessage()));
     }
 
-    @ExceptionHandler(InsufficientAgeException.class)
-    public ResponseEntity<Object> handleInsufficientAgeException(InsufficientAgeException ex) {
-        Map<String, Object> body = new LinkedHashMap<>();
-        body.put("timestamp", LocalDateTime.now());
-        body.put("status", HttpStatus.BAD_REQUEST.value());
-        body.put("error", HttpStatus.BAD_REQUEST.getReasonPhrase());
-        body.put("message", ex.getMessage());
-        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    @ExceptionHandler(InvalidArgumentException.class)
+    public ResponseEntity<Object> handleInsufficientAgeException(InvalidArgumentException ex) {
+        return buildResponseEntity(new UserApiErrorResponse(BAD_REQUEST,
+                LocalDateTime.now(), ex.getMessage()));
     }
 
-    private String getErrorMessage(ObjectError e) {
-        if (e instanceof FieldError) {
-            String field = ((FieldError) e).getField();
-            String message = e.getDefaultMessage();
-            return field + " " + message;
-        }
-        return e.getDefaultMessage();
+    private ResponseEntity<Object> buildResponseEntity(UserApiErrorResponse userApiError) {
+        return new ResponseEntity<>(userApiError, userApiError.status());
+    }
+
+    private Map<String, String> getErrorsMessage(BindingResult bindingResult) {
+        return bindingResult.getAllErrors().stream()
+                .filter(e -> e instanceof FieldError)
+                .collect(Collectors.groupingBy(e -> ((FieldError)e).getField(),
+                        Collectors.mapping(DefaultMessageSourceResolvable::getDefaultMessage,
+                                Collectors.joining())));
     }
 }
