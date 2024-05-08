@@ -1,7 +1,7 @@
 package com.silchenko.arsen.testexampleforclearsolutions.exception;
 
-public class AgeLimitException extends RuntimeException {
-    public AgeLimitException(String message, Throwable cause) {
-        super(message, cause);
+public class InsufficientAgeException extends RuntimeException {
+    public InsufficientAgeException(String message) {
+        super(message);
     }
 }
