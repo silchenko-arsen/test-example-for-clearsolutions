@@ -42,7 +42,8 @@ public class UserServiceImpl implements UserService {
     public UserResponseDto updateFields(Integer id, UpdateUserRequest request) {
         if (userMap.containsKey(id)) {
             User user = userMap.get(id);
-            if (isValidAge(request.birthDate())) {
+            if (request.birthDate() != null) {
+                isValidAge(request.birthDate());
                 user.setBirthDate(request.birthDate());
             }
             if (request.email() != null && !request.email().isEmpty()) {
@@ -95,11 +96,10 @@ public class UserServiceImpl implements UserService {
         return usersInRange.stream().map(userMapper::mapToResponseDto).toList();
     }
 
-    private boolean isValidAge(LocalDate birthDate) {
+    private void isValidAge(LocalDate birthDate) {
         int age = Period.between(birthDate, LocalDate.now()).getYears();
         if (ageLimit > age) {
             throw new InsufficientAgeException(age + " years is not enough for registration.");
         }
-        return true;
     }
 }
